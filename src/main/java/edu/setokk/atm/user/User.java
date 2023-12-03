@@ -44,4 +44,14 @@ public class User {
 
     @Column(nullable = false)
     private String email;
+
+    public UserDTO ofDTO() {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(id);
+        userDTO.setBalance(balance);
+        userDTO.setUsername(username);
+        userDTO.setEmail(email);
+
+        return userDTO;
+    }
 }

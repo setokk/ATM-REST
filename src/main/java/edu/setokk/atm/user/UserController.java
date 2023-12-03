@@ -60,4 +60,14 @@ public class UserController {
 
         return ResponseEntity.ok(jwt);
     }
+
+    public ResponseEntity<?> registerUser(@RequestBody
+                                          @Valid
+                                          RegisterRequest registerRequest) {
+        String username = registerRequest.getUsername();
+        String password = registerRequest.getPassword();
+        String email = registerRequest.getEmail();
+
+        UserDTO userDTO = userService.registerUser(username, password, email);
+    }
 }

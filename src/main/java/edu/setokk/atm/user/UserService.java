@@ -7,6 +7,8 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -30,13 +32,19 @@ public class UserService {
         if (!isValidCredentials)
             throw new InvalidCredentialsException("Invalid password");
 
-        // Prepare user DTO
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setBalance(user.getBalance());
-        userDTO.setUsername(user.getUsername());
-        userDTO.setEmail(user.getEmail());
+        return user.ofDTO();
+    }
 
-        return userDTO;
+    public UserDTO registerUser(String username,
+                                String password,
+                                String email) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.setBalance(BigDecimal.valueOf(0));
+
+        User savedUser = userRepository.save(user);
+        return savedUser.ofDTO();
     }
 }
