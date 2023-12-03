@@ -1,5 +1,6 @@
 package edu.setokk.atm.user;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,5 +17,6 @@ public class RegisterRequest {
     private String password;
 
     @NotNull(message = "email field is required")
+    @Email(message = "email field is invalid")
     private String email;
 }

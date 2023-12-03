@@ -1,10 +1,8 @@
 package edu.setokk.atm.user;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +16,6 @@ import java.security.SecureRandom;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Base64;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,7 +24,7 @@ public class UserController {
     private final static Key secretKey;
     static {
         try {
-            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
             keyGen.init(new SecureRandom());
             secretKey = keyGen.generateKey();
         } catch (NoSuchAlgorithmException e) {
@@ -45,29 +42,38 @@ public class UserController {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
-        UserDTO userDTO = userService.authenticateUser(username, password);
+        UserDTO userDTO = userService
+                .authenticateUser(username, password)
+                .ofDTO();
 
         // Generate JWT Token
-        Instant currentInstant = Instant.now();
-        String jwt = Jwts.builder()
-                .issuer("eclass")
-                .subject(String.valueOf(userDTO.getId()))
-                .claim("role", "user")
-                .issuedAt(Date.from(currentInstant))
-                .expiration(Date.from(currentInstant.plus(Duration.ofDays(2))))
-                .signWith(secretKey)
-                .compact();
-
-        return ResponseEntity.ok(jwt);
+        return ResponseEntity.ok(generateJWT(userDTO.getId()));
     }
 
-    public ResponseEntity<?> registerUser(@RequestBody
-                                          @Valid
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody @Valid
                                           RegisterRequest registerRequest) {
         String username = registerRequest.getUsername();
         String password = registerRequest.getPassword();
         String email = registerRequest.getEmail();
 
-        UserDTO userDTO = userService.registerUser(username, password, email);
+        UserDTO userDTO = userService
+                .registerUser(username, password, email)
+                .ofDTO();
+
+        // Generate JWT Token
+        return ResponseEntity.ok(generateJWT(userDTO.getId()));
+    }
+
+    public String generateJWT(long id) {
+        Instant currentInstant = Instant.now();
+        return Jwts.builder()
+                .issuer("eclass")
+                .subject(String.valueOf(id))
+                .claim("role", "user")
+                .issuedAt(Date.from(currentInstant))
+                .expiration(Date.from(currentInstant.plus(Duration.ofDays(2))))
+                .signWith(secretKey)
+                .compact();
     }
 }
