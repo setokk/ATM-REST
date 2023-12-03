@@ -12,6 +12,8 @@ import java.security.SecureRandom;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -27,15 +29,18 @@ public class JwtUtil {
     }
 
     public static String generateJWT(User user) {
+        Map<String, Object> claims = new HashMap<>(5);
+        claims.put("role", "user");
+        claims.put("id", user.getId());
+        claims.put("username", user.getUsername());
+        claims.put("email", user.getEmail());
+        claims.put("balance", user.getBalance());
+
         Instant currentInstant = Instant.now();
         return Jwts.builder()
                 .issuer("eclass")
                 .subject(String.valueOf(user.getId()))
-                .claim("role", "user")
-                .claim("id", user.getId())
-                .claim("username", user.getUsername())
-                .claim("email", user.getEmail())
-                .claim("balance", user.getBalance())
+                .claims(claims)
                 .issuedAt(Date.from(currentInstant))
                 .expiration(Date.from(currentInstant.plus(Duration.ofDays(2))))
                 .signWith(secretKey)
