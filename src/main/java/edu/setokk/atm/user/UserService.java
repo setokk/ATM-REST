@@ -22,7 +22,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User authenticateUser(String username, String password)
+    public User loginUser(String username, String password)
             throws UserNotFoundException {
         User user = userRepository.findUserByUsername(username)
                 .orElseThrow(() ->
