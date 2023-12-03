@@ -47,7 +47,7 @@ public class UserController {
                 .ofDTO();
 
         // Generate JWT Token
-        return ResponseEntity.ok(generateJWT(userDTO.getId()));
+        return ResponseEntity.ok(generateJWT(userDTO));
     }
 
     @PostMapping("/register")
@@ -62,15 +62,19 @@ public class UserController {
                 .ofDTO();
 
         // Generate JWT Token
-        return ResponseEntity.ok(generateJWT(userDTO.getId()));
+        return ResponseEntity.ok(generateJWT(userDTO));
     }
 
-    public String generateJWT(long id) {
+    public String generateJWT(UserDTO userDTO) {
         Instant currentInstant = Instant.now();
         return Jwts.builder()
                 .issuer("eclass")
-                .subject(String.valueOf(id))
+                .subject(String.valueOf(userDTO.getId()))
                 .claim("role", "user")
+                .claim("id", userDTO.getId())
+                .claim("username", userDTO.getUsername())
+                .claim("email", userDTO.getEmail())
+                .claim("balance", userDTO.getBalance())
                 .issuedAt(Date.from(currentInstant))
                 .expiration(Date.from(currentInstant.plus(Duration.ofDays(2))))
                 .signWith(secretKey)
