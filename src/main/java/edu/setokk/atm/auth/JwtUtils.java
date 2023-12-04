@@ -1,4 +1,4 @@
-package edu.setokk.atm.config.auth;
+package edu.setokk.atm.auth;
 
 import edu.setokk.atm.user.User;
 import io.jsonwebtoken.Claims;
@@ -31,8 +31,7 @@ public class JwtUtils
     }
 
     public static String generateJWT(User user) {
-        Map<String, Object> claims = new HashMap<>(5);
-        claims.put("role", "user");
+        Map<String, Object> claims = new HashMap<>(4);
         claims.put("id", user.getId());
         claims.put("username", user.getUsername());
         claims.put("email", user.getEmail());

@@ -56,7 +56,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void deposit(long userId, BigDecimal amount) {
+    public void deposit(User user, BigDecimal amount) {
+        long userId = user.getId();
+
         boolean userExists = userRepository.existsById(userId);
         if (!userExists)
             throw new UserNotFoundException("User with id: " + userId + " not found");
@@ -64,7 +66,9 @@ public class UserService {
         userRepository.depositAmount(userId, amount);
     }
 
-    public void withdraw(long userId, BigDecimal amount) {
+    public void withdraw(User user, BigDecimal amount) {
+        long userId = user.getId();
+
         boolean userExists = userRepository.existsById(userId);
         if (!userExists)
             throw new UserNotFoundException("User with id: " + userId + " not found");

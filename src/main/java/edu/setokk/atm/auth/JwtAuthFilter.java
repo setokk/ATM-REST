@@ -1,4 +1,4 @@
-package edu.setokk.atm.config.auth;
+package edu.setokk.atm.auth;
 
 import edu.setokk.atm.user.User;
 import io.jsonwebtoken.Claims;

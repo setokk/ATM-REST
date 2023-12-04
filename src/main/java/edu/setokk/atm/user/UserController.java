@@ -1,15 +1,17 @@
 package edu.setokk.atm.user;
 
-import edu.setokk.atm.config.auth.JwtUtils;
+import edu.setokk.atm.auth.JwtUtils;
 import edu.setokk.atm.user.request.LoginRequest;
 import edu.setokk.atm.user.request.RegisterRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/users")
@@ -43,5 +45,34 @@ public class UserController {
 
         // Generate JWT Token
         return ResponseEntity.ok(JwtUtils.generateJWT(user));
+    }
+
+    @GetMapping("/deposit")
+    public ResponseEntity<?> depositAmount(@RequestParam("amount") BigDecimal amount) {
+        User authUser = getAuthenticatedUser();
+        if (authUser == null)
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        userService.deposit(authUser, amount);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/withdraw")
+    public ResponseEntity<?> withdrawAmount(@RequestParam("amount") BigDecimal amount) {
+        User authUser = getAuthenticatedUser();
+        if (authUser == null)
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        userService.withdraw(authUser, amount);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof User))
+            return null;
+
+        return (User) authentication.getPrincipal();
+
     }
 }
