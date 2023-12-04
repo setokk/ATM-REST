@@ -1,6 +1,7 @@
-package edu.setokk.atm.security.auth;
+package edu.setokk.atm.config.auth;
 
 import edu.setokk.atm.user.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public class JwtUtils
@@ -45,5 +47,13 @@ public class JwtUtils
                 .expiration(Date.from(currentInstant.plus(Duration.ofDays(2))))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    public static Claims extractAllClaims(String jwt) {
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(jwt)
+                .getBody();
     }
 }

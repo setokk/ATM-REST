@@ -1,6 +1,6 @@
 package edu.setokk.atm.user;
 
-import edu.setokk.atm.security.auth.JwtUtils;
+import edu.setokk.atm.config.auth.JwtUtils;
 import edu.setokk.atm.user.request.LoginRequest;
 import edu.setokk.atm.user.request.RegisterRequest;
 import jakarta.validation.Valid;
