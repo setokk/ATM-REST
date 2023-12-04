@@ -17,11 +17,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE User SET balance=balance+:amount")
+    @Query("UPDATE User SET balance=balance+:amount WHERE id=:userId")
     void depositAmount(@Param("userId") Long userId, @Param("amount") BigDecimal amount);
 
     @Transactional
     @Modifying
-    @Query("UPDATE User SET balance=balance-:amount")
+    @Query("UPDATE User SET balance=balance-:amount WHERE id=:userId")
     void withdrawAmount(@Param("userId") Long userId, @Param("amount") BigDecimal amount);
 }

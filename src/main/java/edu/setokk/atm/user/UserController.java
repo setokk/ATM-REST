@@ -73,6 +73,5 @@ public class UserController {
             return null;
 
         return (User) authentication.getPrincipal();
-
     }
 }
