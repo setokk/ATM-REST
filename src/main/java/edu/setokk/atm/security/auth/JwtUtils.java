@@ -1,7 +1,6 @@
 package edu.setokk.atm.security.auth;
 
 import edu.setokk.atm.user.User;
-import edu.setokk.atm.user.UserDTO;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class JwtUtil {
+public class JwtUtils
+{
     private final static Key secretKey;
     static {
         try {

@@ -1,4 +1,4 @@
-package edu.setokk.atm.user;
+package edu.setokk.atm.user.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

@@ -46,12 +46,6 @@ public class User {
     private String email;
 
     public UserDTO ofDTO() {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(id);
-        userDTO.setBalance(balance);
-        userDTO.setUsername(username);
-        userDTO.setEmail(email);
-
-        return userDTO;
+        return new UserDTO(id, balance, username, email);
     }
 }

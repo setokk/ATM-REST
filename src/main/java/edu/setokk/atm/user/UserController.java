@@ -1,6 +1,8 @@
 package edu.setokk.atm.user;
 
-import edu.setokk.atm.security.auth.JwtUtil;
+import edu.setokk.atm.security.auth.JwtUtils;
+import edu.setokk.atm.user.request.LoginRequest;
+import edu.setokk.atm.user.request.RegisterRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,7 @@ public class UserController {
         User user = userService.loginUser(username, password);
 
         // Generate JWT Token
-        return ResponseEntity.ok(JwtUtil.generateJWT(user));
+        return ResponseEntity.ok(JwtUtils.generateJWT(user));
     }
 
     @PostMapping("/register")
@@ -40,6 +42,6 @@ public class UserController {
         User user = userService.registerUser(username, password, email);
 
         // Generate JWT Token
-        return ResponseEntity.ok(JwtUtil.generateJWT(user));
+        return ResponseEntity.ok(JwtUtils.generateJWT(user));
     }
 }
