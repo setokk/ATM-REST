@@ -42,7 +42,7 @@ public class UserService {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setEmail(email);
-        user.setBalance(BigDecimal.valueOf(0));
+        user.setBalance(BigDecimal.valueOf(0.0));
 
         // Check if user with same username exists
         ExampleMatcher usernameMatcher = ExampleMatcher.matchingAny()

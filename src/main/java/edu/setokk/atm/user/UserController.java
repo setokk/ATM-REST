@@ -60,6 +60,7 @@ public class UserController {
     @GetMapping("/withdraw")
     public ResponseEntity<?> withdrawAmount(@RequestParam("amount") BigDecimal amount) {
         User authUser = getAuthenticatedUser();
+        System.out.println(authUser);
         if (authUser == null)
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 

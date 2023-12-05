@@ -43,7 +43,7 @@ public class JwtUtils
                 .subject(String.valueOf(user.getId()))
                 .claims(claims)
                 .issuedAt(Date.from(currentInstant))
-                .expiration(Date.from(currentInstant.plus(Duration.ofDays(2))))
+                .expiration(Date.from(currentInstant.plus(Duration.ofMinutes(10))))
                 .signWith(secretKey)
                 .compact();
     }

@@ -40,7 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         long id = Long.parseLong(claims.getSubject());
         String username = (String) claims.get("username");
         String email = (String) claims.get("email");
-        BigDecimal balance = new BigDecimal((String) claims.get("balance"));
+        BigDecimal balance = BigDecimal.valueOf((Double) claims.get("balance"));
 
         User authUser = new User();
         authUser.setId(id);
