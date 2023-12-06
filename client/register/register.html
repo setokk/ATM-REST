@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../common/styles.css"/>
+    <title>Register</title>
+</head>
+<body>
+    <header>
+        <ul>
+            <li><a href="../home/home.html">Home</a></li>
+            <li><a href="../login/login.html">Login</a></li>
+            <li><a href="../register/register.html">Register</a></li>
+            <li><a href="../account/account.html">My Account</a></li>
+        </ul>
+    </header>
+
+    <form method="POST" id="form" >
+        <label for="username">Username:</label>
+        <input id="username" name="username" type="text" required/>
+        <label for="password">Password:</label>
+        <input id="password" name="password" type="password" required/>
+        <label for="email">Email:</label>
+        <input id="email" name="email" type="email" required/>
+        <button id="registerBtn" type="submit">Register</button>
+    </form>
+
+    <script type="module">
+        import { JwtHolder } from '../common/modules/JwtHolder.js';
+        import { User }      from '../common/modules/User.js';
+        import { Api }       from '../common/modules/Api.js'
+
+        const form     = document.getElementById('form')
+        const username = document.getElementById('username');
+        const password = document.getElementById('password');
+        const email    = document.getElementById('email');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const registerBody = {
+                "username": username.value.trim(),
+                "password": password.value.trim(),
+                "email": email.value.trim()
+            }
+
+            try {
+                const response = await fetch(Api.REGISTER, {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(registerBody)
+                });
+                
+                // Check response status
+                if (response.status === 400) {
+                    const data = await response.json();
+                    const errors = await data.errors;
+
+                    const msg = '';
+                    errors.array.forEach(e => {
+                        msg += e + '\n';
+                    });
+                    
+                alert(msg.toUpperCase());
+                return;
+            } else if (!response.ok) {
+                alert('Problem connecting to server...');
+                return;
+            }
+
+            // Registration successful, retrieve JWT
+            const token = await response.text();
+            JwtHolder.updateJwt(token, new User());
+        } catch (error) {
+            console.error(error);
+        }
+
+        username.value = '';
+        password.value = '';
+        email.value    = '';
+
+    })
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+:root {
+    --smooth-orange: rgb(255, 144, 17);
+}
+
+html {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30px;
+}
+
+/* Common styles */
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #222;
+}
+header {
+    background-color: #333;
+    padding: 10px 0;
+    text-align: center;
+}
+header ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+header ul li, header ul li a {
+    display: inline;
+    margin-right: 20px;
+    text-decoration: none;
+    color: white;
+    transition: color 200ms;
+}
+header ul li:last-child {
+    margin-right: 0;
+}
+header ul li a:hover {
+    cursor: pointer;
+    color: var(--smooth-orange);
+    transition: color 200ms;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 20px
+}
+label, input, button {
+    margin: 5px;
+}
+.highlight {
+    color: var(--smooth-orange);
+}
+
+
+/* Homepage */
+#home-main-div {
+    text-align: center;
+    background-color: #333;
+    border-radius: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
