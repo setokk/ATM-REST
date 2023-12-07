@@ -1,5 +1,6 @@
 package edu.setokk.atm.user;
 
+import edu.setokk.atm.error.exception.user.InsufficientBalanceException;
 import edu.setokk.atm.error.exception.user.InvalidCredentialsException;
 import edu.setokk.atm.error.exception.user.UserNotFoundException;
 import edu.setokk.atm.error.exception.user.UsernameExistsException;
@@ -73,7 +74,9 @@ public class UserService {
         if (!userExists)
             throw new UserNotFoundException("User with id: " + userId + " not found");
 
-        userRepository.withdrawAmount(userId, amount);
+        boolean withdrawSuccess = userRepository.withdrawAmount(userId, amount) > 0;
+        if (!withdrawSuccess)
+            throw new InsufficientBalanceException("Insufficient balance for withdraw amount=" + amount);
     }
 
 }

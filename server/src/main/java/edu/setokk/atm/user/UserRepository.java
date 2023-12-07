@@ -20,8 +20,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("UPDATE User SET balance=balance+:amount WHERE id=:userId")
     void depositAmount(@Param("userId") Long userId, @Param("amount") BigDecimal amount);
 
+    /**
+     * The return type is int, indicating how many rows were modified.
+     * We use this to know if the amount is <= balance.
+     * */
     @Transactional
     @Modifying
-    @Query("UPDATE User SET balance=balance-:amount WHERE id=:userId")
-    void withdrawAmount(@Param("userId") Long userId, @Param("amount") BigDecimal amount);
+    @Query("UPDATE User SET balance=balance-:amount WHERE id=:userId AND :amount<=balance")
+    int withdrawAmount(@Param("userId") Long userId, @Param("amount") BigDecimal amount);
 }
