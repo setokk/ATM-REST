@@ -1,5 +1,5 @@
 export class Api {
-    static USERS    = 'http://localhost:8080/api/users';
+    static USERS    = 'http://server:8080/api/users';
     static REGISTER = this.USERS + '/register';
     static LOGIN    = this.USERS + '/login';
     static DEPOSIT  = this.USERS + '/deposit';
