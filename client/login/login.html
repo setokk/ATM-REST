@@ -51,11 +51,9 @@
                 });
                 
                 // Check response status
-                if (response.status === 404) {
-                    alert(await response.json().message);
-                    return;
-                } else if (response.status === 401) {
-                    alert(await response.json().message);
+                if (response.status === 404 || response.status === 401) {
+                    const error = await response.json();
+                    alert(error.message);
                     return;
                 } else if (!response.ok) {
                     alert('Problem connecting to server...');
@@ -69,8 +67,8 @@
                 // Store jwt and user to local storage
                 localStorage.setItem("token", JwtUtils.token);
                 localStorage.setItem("user", JSON.stringify(JwtUtils.user));
-            } catch (error) {
-                console.error(error);
+            } catch (err) {
+                console.error(err);
             }
 
         username.value = '';

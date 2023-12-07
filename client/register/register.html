@@ -56,8 +56,8 @@
                 
                 // Check response status
                 if (response.status === 409) {
-                    
-                    alert();
+                    const error = await response.json();
+                    alert(error.message);
                     return;
                 } else if (!response.ok) {
                     alert('Problem connecting to server...');

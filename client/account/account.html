@@ -48,16 +48,11 @@
         /* Handle transactions */
         const withdrawBtn = document.getElementById('withdrawBtn');
         const depositBtn  = document.getElementById('depositBtn');
-        const amount      = document.getElementById('amount');
+        const amountInput = document.getElementById('amount');
         
         withdrawBtn.addEventListener('click', async () => {
             if (user === null)
                 return;    
-
-            if (amount.value <= 0) {
-                alert("Amount must be positive");
-                return;
-            }
 
             const token = localStorage.getItem("token");
             if (token === null) {
@@ -65,18 +60,15 @@
                 return;
             }
 
-            // Withdraw URL needs query param
-            const withdrawURL = new URL(Api.WITHDRAW);
-            withdrawURL.searchParams.append('amount', amount.value);
-            const response = await fetch(withdrawURL, {
-                method: "GET",
-                headers: {
-                    "Authorization": "Bearer "  + token,
-                }
-            });
+            if (amountInput.value <= 0) {
+                alert("Amount must be positive");
+                return;
+            }
+
+            const response = await makeTransactionRequest(Api.WITHDRAW, token, amountInput.value);
 
             if (response.status === 400) {
-                const error = response.json();
+                const error = await response.json();
                 alert(error.message);
                 return;
             } else if (response.status === 403) {
@@ -94,15 +86,66 @@
             alert("Withdraw successful!");
         
             // Refresh local storage
-            user.balance -= amount;
-            localStorage.removeItem("user");
-            localStorage.setItem("user", user);
+            user.balance -= parseFloat(amountInput.value);
+            balance.textContent = `Balance: ${user.balance}€`;
+            localStorage.setItem("user", JSON.stringify(user));
         });
 
         depositBtn.addEventListener('click', async () => {
             if (user === null)
+                return;    
+
+            const token = localStorage.getItem("token");
+            if (token === null) {
+                alert("Please login again! (Reason: token expired)");
                 return;
+            }
+
+            if (amountInput.value <= 0) {
+                alert("Amount must be positive");
+                return;
+            }
+
+            const response = await makeTransactionRequest(Api.DEPOSIT, token, amountInput.value);
+
+            if (response.status === 400) {
+                const error = await response.json();
+                alert(error.message);
+                return;
+            } else if (response.status === 403) {
+                alert("Token expired!");
+                return;
+            } else if (response.status === 500) {
+                alert("Internal server error. Please try again later.");
+                return;
+            } else if (!response.ok) {
+                alert("Unknown server error.");
+                return;
+            }
+
+            // Respose is ok at this point
+            alert("Deposit successful!");
+        
+            // Refresh local storage
+            user.balance += parseFloat(amountInput.value);
+            balance.textContent = `Balance: ${user.balance}€`;
+            localStorage.setItem("user", JSON.stringify(user));
         });
+
+
+        async function makeTransactionRequest(url, token, amount) {
+            // Withdraw/Deposit URL needs query param
+            const apiUrl = new URL(url);
+            apiUrl.searchParams.append('amount', amount);
+            const response = await fetch(apiUrl, {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer "  + token,
+                }
+            });
+
+            return response;
+        } 
     </script>
 </body>
 </html>
