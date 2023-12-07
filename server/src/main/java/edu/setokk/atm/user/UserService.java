@@ -1,9 +1,6 @@
 package edu.setokk.atm.user;
 
-import edu.setokk.atm.error.exception.user.InsufficientBalanceException;
-import edu.setokk.atm.error.exception.user.InvalidCredentialsException;
-import edu.setokk.atm.error.exception.user.UserNotFoundException;
-import edu.setokk.atm.error.exception.user.UsernameExistsException;
+import edu.setokk.atm.error.exception.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -45,7 +42,7 @@ public class UserService {
         user.setEmail(email);
         user.setBalance(BigDecimal.valueOf(0.0));
 
-        // Check if user with same username exists
+        // Check if same username exists
         ExampleMatcher usernameMatcher = ExampleMatcher.matchingAny()
                 .withMatcher("username", match -> match.exact())
                 .withIgnorePaths("password", "email", "balance", "id");
@@ -53,6 +50,15 @@ public class UserService {
         boolean usernameExists = userRepository.exists(Example.of(user, usernameMatcher));
         if (usernameExists)
             throw new UsernameExistsException("User with username: " + username + " exists");
+
+        // Check if same email exists
+        ExampleMatcher emailMatcher = ExampleMatcher.matchingAny()
+                .withMatcher("email", match -> match.exact())
+                .withIgnorePaths("username", "password", "balance", "id");
+
+        boolean emailExists = userRepository.exists(Example.of(user, emailMatcher));
+        if (emailExists)
+            throw new EmailExistsException("Email is taken.");
 
         return userRepository.save(user);
     }

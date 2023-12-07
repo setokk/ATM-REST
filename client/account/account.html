@@ -22,19 +22,87 @@
         <li id="email">Email:</li>
     </ul>
 
+    <div id="transactions-div">
+        <h3>Enter amount:</h3>
+        <input id="amount" type="number" required/>
+        <button id="withdrawBtn">Withdraw</button>
+        <button id="depositBtn">Deposit</button>
+    </div>
+
     <script type="module">
-        import { JwtHolder } from '../common/modules/JwtHolder.js';
+        import { JwtUtils } from '../common/modules/JwtUtils.js';
         import { User }      from '../common/modules/User.js';
         import { Api }       from '../common/modules/Api.js'
 
         const balance  = document.getElementById('balance');
         const username = document.getElementById('username');
         const email    = document.getElementById('email'); 
-        if (JwtHolder.user !== undefined) {
-            balance.textContent  = `Balance: ${JwtHolder.user.balance}`;
-            username.textContent = `Username: ${JwtHolder.user.username}`;
-            email.textContent    = `Email: ${JwtHolder.user.email}`;
+
+        let user = JSON.parse(localStorage.getItem("user"));
+        if (user !== null) {
+            balance.textContent  = `Balance: ${user.balance}€`;
+            username.textContent = `Username: ${user.username}`;
+            email.textContent    = `Email: ${user.email}`;
         }
+
+        /* Handle transactions */
+        const withdrawBtn = document.getElementById('withdrawBtn');
+        const depositBtn  = document.getElementById('depositBtn');
+        const amount      = document.getElementById('amount');
+        
+        withdrawBtn.addEventListener('click', async () => {
+            if (user === null)
+                return;    
+
+            if (amount.value <= 0) {
+                alert("Amount must be positive");
+                return;
+            }
+
+            const token = localStorage.getItem("token");
+            if (token === null) {
+                alert("Please login again! (Reason: token expired)");
+                return;
+            }
+
+            // Withdraw URL needs query param
+            const withdrawURL = new URL(Api.WITHDRAW);
+            withdrawURL.searchParams.append('amount', amount.value);
+            const response = await fetch(withdrawURL, {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer "  + token,
+                }
+            });
+
+            if (response.status === 400) {
+                const error = response.json();
+                alert(error.message);
+                return;
+            } else if (response.status === 403) {
+                alert("Token expired or missing!");
+                return;
+            } else if (response.status === 500) {
+                alert("Internal server error. Please try again later.");
+                return;
+            } else if (!response.ok) {
+                alert("Unknown server error.");
+                return;
+            }
+
+            // Respose is ok at this point
+            alert("Withdraw successful!");
+        
+            // Refresh local storage
+            user.balance -= amount;
+            localStorage.removeItem("user");
+            localStorage.setItem("user", user);
+        });
+
+        depositBtn.addEventListener('click', async () => {
+            if (user === null)
+                return;
+        });
     </script>
 </body>
 </html>

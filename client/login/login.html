@@ -51,32 +51,27 @@
                 });
                 
                 // Check response status
-                if (response.status === 400) {
-                    const data = await response.json();
-                    const errors = await data.errors;
+                if (response.status === 404) {
+                    alert(await response.json().message);
+                    return;
+                } else if (response.status === 401) {
+                    alert(await response.json().message);
+                    return;
+                } else if (!response.ok) {
+                    alert('Problem connecting to server...');
+                    return;
+                }
 
-                    const msg = '';
-                    errors.array.forEach(e => {
-                        msg += e + '\n';
-                    });
-                    
-                alert(msg.toUpperCase());
-                return;
-            } else if (!response.ok) {
-                alert('Problem connecting to server...');
-                return;
+                // Registration successful, retrieve JWT
+                const token = await response.text();
+                JwtUtils.updateJwt(token, new User());
+                
+                // Store jwt and user to local storage
+                localStorage.setItem("token", JwtUtils.token);
+                localStorage.setItem("user", JSON.stringify(JwtUtils.user));
+            } catch (error) {
+                console.error(error);
             }
-
-            // Registration successful, retrieve JWT
-            const token = await response.text();
-            JwtUtils.updateJwt(token, new User());
-            
-            // Store jwt and user to local storage
-            localStorage.setItem("token", JwtUtils.token);
-            localStorage.setItem("user", JSON.stringify(JwtUtils.user));
-        } catch (error) {
-            console.error(error);
-        }
 
         username.value = '';
         password.value = '';

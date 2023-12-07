@@ -4,6 +4,7 @@ import edu.setokk.atm.auth.JwtUtils;
 import edu.setokk.atm.user.request.LoginRequest;
 import edu.setokk.atm.user.request.RegisterRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     @GetMapping("/deposit")
-    public ResponseEntity<?> depositAmount(@RequestParam("amount") BigDecimal amount) {
+    public ResponseEntity<?> depositAmount(@RequestParam("amount") @Positive BigDecimal amount) {
         User authUser = getAuthenticatedUser();
         if (authUser == null)
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -58,7 +59,7 @@ public class UserController {
     }
 
     @GetMapping("/withdraw")
-    public ResponseEntity<?> withdrawAmount(@RequestParam("amount") BigDecimal amount) {
+    public ResponseEntity<?> withdrawAmount(@RequestParam("amount") @Positive BigDecimal amount) {
         User authUser = getAuthenticatedUser();
         System.out.println(authUser);
         if (authUser == null)
