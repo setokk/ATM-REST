@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../common/styles.css"/>
+    <title>My Account</title>
+</head>
+<body>
+    <header>
+        <ul>
+            <li><a href="../home/home.html">Home</a></li>
+            <li><a href="../login/login.html">Login</a></li>
+            <li><a href="../register/register.html">Register</a></li>
+            <li><a href="../account/account.html">My Account</a></li>
+        </ul>
+    </header>
+
+    <ul id="account-info">
+        <li id="balance">Balance:</li>
+        <li id="username">Username:</li>
+        <li id="email">Email:</li>
+    </ul>
+
+    <script type="module">
+        import { JwtHolder } from '../common/modules/JwtHolder.js';
+        import { User }      from '../common/modules/User.js';
+        import { Api }       from '../common/modules/Api.js'
+
+        const balance  = document.getElementById('balance');
+        const username = document.getElementById('username');
+        const email    = document.getElementById('email'); 
+        if (JwtHolder.user !== undefined) {
+            balance.textContent  = `Balance: ${JwtHolder.user.balance}`;
+            username.textContent = `Username: ${JwtHolder.user.username}`;
+            email.textContent    = `Email: ${JwtHolder.user.email}`;
+        }
+    </script>
+</body>
+</html>

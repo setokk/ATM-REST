@@ -1,4 +1,4 @@
-export class JwtHolder {
+export class JwtUtils {
     static token = undefined;
     static user = undefined;
 

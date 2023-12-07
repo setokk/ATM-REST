@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../common/styles.css"/>
+    <title>Login</title>
+</head>
+<body>
+    <header>
+        <ul>
+            <li><a href="../home/home.html">Home</a></li>
+            <li><a href="../login/login.html">Login</a></li>
+            <li><a href="../register/register.html">Register</a></li>
+            <li><a href="../account/account.html">My Account</a></li>
+        </ul>
+    </header>
+
+    <form method="POST" id="form" >
+        <label for="username">Username:</label>
+        <input id="username" name="username" type="text" required/>
+        <label for="password">Password:</label>
+        <input id="password" name="password" type="password" required/>
+        <button id="loginBtn" type="submit">Login</button>
+    </form>
+
+    <script type="module">
+        import { JwtUtils } from '../common/modules/JwtUtils.js';
+        import { User }      from '../common/modules/User.js';
+        import { Api }       from '../common/modules/Api.js'
+
+        const form     = document.getElementById('form')
+        const username = document.getElementById('username');
+        const password = document.getElementById('password');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const loginBody = {
+                "username": username.value.trim(),
+                "password": password.value.trim()
+            }
+
+            try {
+                const response = await fetch(Api.LOGIN, {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(loginBody)
+                });
+                
+                // Check response status
+                if (response.status === 400) {
+                    const data = await response.json();
+                    const errors = await data.errors;
+
+                    const msg = '';
+                    errors.array.forEach(e => {
+                        msg += e + '\n';
+                    });
+                    
+                alert(msg.toUpperCase());
+                return;
+            } else if (!response.ok) {
+                alert('Problem connecting to server...');
+                return;
+            }
+
+            // Registration successful, retrieve JWT
+            const token = await response.text();
+            JwtUtils.updateJwt(token, new User());
+            
+            // Store jwt and user to local storage
+            localStorage.setItem("token", JwtUtils.token);
+            localStorage.setItem("user", JSON.stringify(JwtUtils.user));
+        } catch (error) {
+            console.error(error);
+        }
+
+        username.value = '';
+        password.value = '';
+
+        window.location.href = 'http://localhost:3000/account/account.html';
+    })
+    </script>
+</body>
+</html>

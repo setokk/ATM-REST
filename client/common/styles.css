@@ -65,3 +65,14 @@ label, input, button {
     padding: 5px;
 }
 
+/* My Account page */
+#account-info {
+    list-style: none;
+    background-color: #333;
+    border-radius: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
